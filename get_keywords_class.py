@@ -5,9 +5,9 @@ import pandas as pd
 
 
 
-df = pd.read_csv("/home/herisson/Documents/sanopsy/data_labeled.csv",
+df = pd.read_csv("data/csv/data_labeled.csv",
                  header = None ).iloc[:,:-1]
-df_keys = pd.read_csv("/home/herisson/Documents/sanopsy/therapies_mots_clef .csv" )
+df_keys = pd.read_csv("data/csv/therapies_mots_clef.csv" )
 
 for i in range(len(df_keys)):
     df_keys["Courants"][i] = df_keys["Courants"][i].strip()
