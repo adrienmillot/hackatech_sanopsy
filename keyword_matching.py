@@ -1,6 +1,10 @@
 import pandas as pd
 import os
+import numpy as np
 from preprocess_data import split_data_by_class, get_labels_from_keywords, accuracy
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
 
 data_dir = "data/csv/"
 data = pd.read_csv(os.path.join(data_dir, "full_dataset.csv"))
@@ -26,8 +30,10 @@ test_classes = [classes[i] for i in test_indices]
 
 # build sub keyword -> associated class mapping
 sub_keyword_to_class = {}
+all_train_sub_keywords = []
 for i in range(len(train_text)):
     current_sub_keywords = train_sub_keywords[i].split(";")
+    all_train_sub_keywords += current_sub_keywords
     for keyword in current_sub_keywords:
         if keyword not in sub_keyword_to_class:
             sub_keyword_to_class[keyword] = []
@@ -63,4 +69,23 @@ for i in range(len(test_text)):
 test_predicted_classes = get_labels_from_keywords(found_sub_keywords, sub_keyword_to_class)
 print(test_predicted_classes)
 print(accuracy(test_predicted_classes, test_classes))
+unique_subkeywords = np.unique(all_train_sub_keywords)[1:]
+
+X = []
+for txt in data.iloc[:,0]:
+    X.append(np.char.count(txt,unique_subkeywords))
+
+y = data.iloc[:,-1]
+
+X_train, X_test, y_train, y_test = train_test_split(X,y)
+
+clf = RandomForestClassifier().fit(X_train,y_train)
+
+clf.predict(X_test)
+score = clf.score(X_test, y_test)
+
+
+    
+
+
 
