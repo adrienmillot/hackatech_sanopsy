@@ -34,6 +34,14 @@ for i in range(len(train_text)):
         if train_classes[i] not in sub_keyword_to_class[keyword]:
             sub_keyword_to_class[keyword].append(train_classes[i])
 
+class_keyword_counts = {}
+for _, v in sub_keyword_to_class.items():
+    for keyword_class in v:
+        if keyword_class in class_keyword_counts:
+            class_keyword_counts[keyword_class] += 1
+        else:
+            class_keyword_counts[keyword_class] = 1
+
 found_sub_keywords = []
 for i in range(len(train_text)):
     current_text = train_text[i].lower().replace("(", "").replace(")", "")
@@ -45,7 +53,13 @@ for i in range(len(train_text)):
         print(f"Found no keywords {i}")
     found_sub_keywords.append(current_sub_keywords)
 
+for lab in class_keyword_counts:
+    print(f"{lab}: {len([x for x in train_classes if x == lab])}")
+
 train_predicted_classes = get_labels_from_keywords(found_sub_keywords, sub_keyword_to_class)
+for lab in class_keyword_counts:
+    print(f"{lab}: {len([x for x in train_predicted_classes if x == lab])}")
+
 print(train_predicted_classes)
 print(accuracy(train_predicted_classes, train_classes))
 
