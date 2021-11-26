@@ -19,6 +19,18 @@ def accuracy(predicted, targets):
     return float(correct) / float(len(predicted))
 
 
+def fuzzy_accuracy(predicted, targets_list, max_place):    
+    correct = 0
+    for i in range(len(predicted)):
+        for j in range(0,max_place):
+            if(len(targets_list[i].split(';'))<j+1):
+                break         
+            if predicted[i] == targets_list[i].split(';')[j]:
+                correct += 1
+                break
+    return float(correct) / float(len(predicted))
+
+
 def split_data_by_class(ratio, classes):
     """
     :param ratio: ratio of example to put in test set
@@ -82,6 +94,7 @@ def get_labels_from_keywords(keywords, keyword_class_dict):
     :return: list of labels, one for each example
     """
     labels = []
+    main_labels = []
     for current_keywords in keywords:
         current_labels = {}
         found_keywords = []
@@ -89,15 +102,24 @@ def get_labels_from_keywords(keywords, keyword_class_dict):
             if keyword in current_keywords:  # if keyword in text, add labels associated with keyword
                 found_keywords.append(keyword)
                 for keyword_class in keyword_class_dict[keyword]:
+                    
                     if keyword_class in current_labels:
                         current_labels[keyword_class] += 1
                     else:
                         current_labels[keyword_class] = 1
         current_labels = list(current_labels.items())
         current_labels.sort(key=lambda x: x[1], reverse=True)
+        
+        
+        i=0
         label = current_labels[0][0]
+        while len(current_labels) > i+1:
+            i+=1
+            label = ';'.join([label, current_labels[i][0]])
+        
         labels.append(label)
-    return labels
+        main_labels.append(current_labels[0][0])
+    return main_labels,labels
 
 
 if __name__ == "__main__":
@@ -111,7 +133,7 @@ if __name__ == "__main__":
     keywords = [[' '.join(x.lower().split()) for x in current_keywords.split(";")] for current_keywords in keywords]
 
     keyword_class_dict = load_keyword_class_dict(os.path.join(data_dir, "therapies_groupes_mots-clés.csv"))
-    targets = get_labels_from_keywords(keywords, keyword_class_dict)
+    main_targets,targets = get_labels_from_keywords(keywords, keyword_class_dict)
 
     assert len(texts) == len(sub_keywords) == len(keywords) == len(targets)
     print(texts[0])
@@ -122,8 +144,9 @@ if __name__ == "__main__":
     sub_keywords = [";".join(x) for x in sub_keywords]
     keywords = [";".join(x) for x in keywords]
 
-    dataset = pd.DataFrame(zip(texts, sub_keywords, keywords, targets), columns=['text', 'sub_keywords', 'keywords', 'class'])
+    dataset = pd.DataFrame(zip(texts, sub_keywords, keywords,main_targets, targets), columns=['text', 'sub_keywords', 'keywords', 'main_class','classes'])
     dataset.to_csv("data/csv/full_dataset.csv", index=False,)
 
-
+    print(dataset["classes"].value_counts())
+    print(len(dataset["classes"].value_counts()))
 

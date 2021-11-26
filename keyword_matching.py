@@ -5,11 +5,13 @@ from preprocess_data import split_data_by_class, get_labels_from_keywords, accur
 
 data_dir = "data/csv/"
 data = pd.read_csv(os.path.join(data_dir, "full_dataset.csv"))
+# data = pd.read_csv(os.path.join(data_dir, "new_full_dataset.csv"))
 
 all_text = data.iloc[:, 0].tolist()
 sub_keywords = data.iloc[:, 1].tolist()
 keywords = data.iloc[:, 2].tolist()
 classes = data.iloc[:, 3].tolist()
+classes_lists = data.iloc[:, 4].tolist()
 
 train_indices, test_indices = split_data_by_class(0.2, classes)
 print(len(train_indices))
@@ -19,11 +21,13 @@ train_text = [all_text[i] for i in train_indices]
 train_sub_keywords = [sub_keywords[i] for i in train_indices]
 train_keywords = [keywords[i] for i in train_indices]
 train_classes = [classes[i] for i in train_indices]
+train_classes_lists = [classes_lists[i] for i in train_indices]
 
 test_text = [all_text[i] for i in test_indices]
 test_sub_keywords = [sub_keywords[i] for i in test_indices]
 test_keywords = [keywords[i] for i in test_indices]
 test_classes = [classes[i] for i in test_indices]
+test_classes_lists = [classes[i] for i in test_indices]
 
 # build sub keyword -> associated class mapping
 sub_keyword_to_class = {}
