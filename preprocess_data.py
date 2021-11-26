@@ -116,6 +116,6 @@ if __name__ == "__main__":
     keywords = [";".join(x) for x in keywords]
 
     dataset = pd.DataFrame(zip(texts, sub_keywords, keywords, targets), columns=['text', 'sub_keywords', 'keywords', 'class'])
-    dataset.to_csv("full_dataset.csv", index=False,)
+    dataset.to_csv("data/csv/full_dataset.csv", index=False,)
 
 
