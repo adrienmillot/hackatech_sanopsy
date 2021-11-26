@@ -4,6 +4,13 @@ import numpy as np
 import random
 
 
+def map_targets(train_targets, test_targets):
+    target_mapping = {t: i for i, t in enumerate(list(set(train_targets)))}
+    train_targets = [target_mapping[x] for x in train_targets]
+    test_targets = [target_mapping[x] for x in test_targets]
+    return train_targets, test_targets, target_mapping
+
+
 def accuracy(predicted, targets):
     correct = 0
     for i in range(len(predicted)):
