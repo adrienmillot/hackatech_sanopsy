@@ -103,6 +103,10 @@ if __name__ == "__main__":
     print(sub_keywords[0])
     print(keywords[0])
     print(targets[0])
+    # change to better csv format
+    sub_keywords = [";".join(x) for x in sub_keywords]
+    keywords = [";".join(x) for x in keywords]
+
     dataset = pd.DataFrame(zip(texts, sub_keywords, keywords, targets), columns=['text', 'sub_keywords', 'keywords', 'class'])
     dataset.to_csv("full_dataset.csv", index=False,)
 
