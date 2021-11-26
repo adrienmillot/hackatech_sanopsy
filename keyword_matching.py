@@ -56,7 +56,7 @@ for i in range(len(train_text)):
 
 for lab in class_keyword_counts:
     print(f"{lab}: {len([x for x in train_classes if x == lab])}")
-
+print("\n")
 train_predicted_classes = get_labels_from_keywords(found_sub_keywords, sub_keyword_to_class)
 for lab in class_keyword_counts:
     print(f"{lab}: {len([x for x in train_predicted_classes if x == lab])}")
@@ -78,3 +78,7 @@ for i in range(len(test_text)):
 test_predicted_classes = get_labels_from_keywords(found_sub_keywords, sub_keyword_to_class)
 print(test_predicted_classes)
 print(accuracy(test_predicted_classes, test_classes))
+
+for lab in class_keyword_counts:
+    print(f"{lab}: {len([x for x in test_predicted_classes if x == lab])}")
+
