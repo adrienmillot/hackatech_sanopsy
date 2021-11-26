@@ -4,6 +4,14 @@ import numpy as np
 import random
 
 
+def accuracy(predicted, targets):
+    correct = 0
+    for i in range(len(predicted)):
+        if predicted[i] == targets[i]:
+            correct += 1
+    return float(correct) / float(len(predicted))
+
+
 def split_data_by_class(ratio, classes):
     """
     :param ratio: ratio of example to put in test set
