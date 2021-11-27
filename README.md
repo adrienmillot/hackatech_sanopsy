@@ -1,3 +1,6 @@
+![Image of the sanopsy brand](images/sanopsy.png "Sanopsy brand")
+
+
 Data Preprocessing
 ------------------
 convert to csv
