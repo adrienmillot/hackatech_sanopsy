@@ -1,33 +1,76 @@
 import pandas as pd
 import os
-from preprocess_data import split_data_by_class, get_labels_from_keywords, accuracy
+
+from collections import *
+
+from preprocess_data import split_data_by_class, get_labels_from_keywords, accuracy,get_labels_from_keywords_with_ratio
 
 
 data_dir = "data/csv/"
-data = pd.read_csv(os.path.join(data_dir, "full_dataset.csv"))
-# data = pd.read_csv(os.path.join(data_dir, "new_full_dataset.csv"))
 
-all_text = data.iloc[:, 0].tolist()
-sub_keywords = data.iloc[:, 1].tolist()
-keywords = data.iloc[:, 2].tolist()
-classes = data.iloc[:, 3].tolist()
-classes_lists = data.iloc[:, 4].tolist()
+manual_data_balancing = False
 
-train_indices, test_indices = split_data_by_class(0.2, classes)
-print(len(train_indices))
-print(len(test_indices))
+if(not manual_data_balancing):
 
-train_text = [all_text[i] for i in train_indices]
-train_sub_keywords = [sub_keywords[i] for i in train_indices]
-train_keywords = [keywords[i] for i in train_indices]
-train_classes = [classes[i] for i in train_indices]
-train_classes_lists = [classes_lists[i] for i in train_indices]
+#     data = pd.read_csv(os.path.join(data_dir, "new_full_dataset.csv"))
+    data = pd.read_csv(os.path.join(data_dir, "full_dataset.csv"))
+     
+     
+     
+    all_text = data.iloc[:, 0].tolist()
+    sub_keywords = data.iloc[:, 1].tolist()
+    keywords = data.iloc[:, 2].tolist()
+    classes = data.iloc[:, 3].tolist()
+    lists_classes = data.iloc[:, 4].tolist()
+     
+    train_indices, test_indices = split_data_by_class(0.2, classes)
+    print(len(train_indices))
+    print(len(test_indices))
+     
+    train_text = [all_text[i] for i in train_indices]
+    train_sub_keywords = [sub_keywords[i] for i in train_indices]
+    train_keywords = [keywords[i] for i in train_indices]
+    train_classes = [classes[i] for i in train_indices]
+    train_lists_classes = [lists_classes[i] for i in train_indices]
+     
+    test_text = [all_text[i] for i in test_indices]
+    test_sub_keywords = [sub_keywords[i] for i in test_indices]
+    test_keywords = [keywords[i] for i in test_indices]
+    test_classes = [classes[i] for i in test_indices]
+    test_lists_classes = [lists_classes[i] for i in test_indices]
 
-test_text = [all_text[i] for i in test_indices]
-test_sub_keywords = [sub_keywords[i] for i in test_indices]
-test_keywords = [keywords[i] for i in test_indices]
-test_classes = [classes[i] for i in test_indices]
-test_classes_lists = [classes[i] for i in test_indices]
+
+    
+    print(Counter(train_classes))
+    print(Counter(test_classes))
+    
+else:
+    
+    ####################"""""""""
+    data_train = pd.read_csv(os.path.join(data_dir, "new_full_dataset_train.csv"))
+    data_test = pd.read_csv(os.path.join(data_dir, "new_full_dataset_test.csv"))
+    
+    
+    
+    train_text = data_train.iloc[:, 0].tolist()
+    train_sub_keywords = data_train.iloc[:, 1].tolist()
+    train_keywords = data_train.iloc[:, 2].tolist()
+    train_classes = data_train.iloc[:, 3].tolist()
+    train_lists_classes = data_train.iloc[:, 4].tolist()
+    
+    test_text = data_test.iloc[:, 0].tolist()
+    test_sub_keywords = data_test.iloc[:, 1].tolist()
+    test_keywords = data_test.iloc[:, 2].tolist()
+    test_classes = data_test.iloc[:, 3].tolist()
+    test_lists_classes = data_test.iloc[:, 4].tolist()
+    
+    ################"""
+
+
+
+
+
+
 
 # build sub keyword -> associated class mapping
 sub_keyword_to_class = {}
@@ -61,7 +104,8 @@ for i in range(len(train_text)):
 for lab in class_keyword_counts:
     print(f"{lab}: {len([x for x in train_classes if x == lab])}")
 print("\n")
-train_predicted_classes = get_labels_from_keywords(found_sub_keywords, sub_keyword_to_class)
+# train_predicted_classes,_ = get_labels_from_keywords(found_sub_keywords, sub_keyword_to_class)
+train_predicted_classes,_ = get_labels_from_keywords_with_ratio(found_sub_keywords, sub_keyword_to_class)
 for lab in class_keyword_counts:
     print(f"{lab}: {len([x for x in train_predicted_classes if x == lab])}")
 
@@ -79,7 +123,7 @@ for i in range(len(test_text)):
         print(f"Found no keywords {i}")
     found_sub_keywords.append(current_sub_keywords)
 
-test_predicted_classes = get_labels_from_keywords(found_sub_keywords, sub_keyword_to_class)
+test_predicted_classes,_ = get_labels_from_keywords(found_sub_keywords, sub_keyword_to_class)
 print(test_predicted_classes)
 print(accuracy(test_predicted_classes, test_classes))
 

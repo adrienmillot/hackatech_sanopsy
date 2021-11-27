@@ -1,5 +1,6 @@
 from sklearn.ensemble import RandomForestClassifier
 from imblearn.over_sampling import RandomOverSampler
+from collections import *
 
 from embeddings import *
 from preprocess_data import map_targets, accuracy,fuzzy_accuracy
@@ -7,7 +8,7 @@ from preprocess_data import map_targets, accuracy,fuzzy_accuracy
 
 data_dir = "data/csv/"
 
-manual_data_balancing = False
+manual_data_balancing = True
 
 if(not manual_data_balancing):
 
@@ -38,6 +39,11 @@ if(not manual_data_balancing):
     test_classes = [classes[i] for i in test_indices]
     test_lists_classes = [lists_classes[i] for i in test_indices]
 
+
+    
+    print(Counter(train_classes))
+    print(Counter(test_classes))
+    
 else:
     
     ####################"""""""""
@@ -65,6 +71,9 @@ else:
 train_classes, test_classes, target_mapping = map_targets(train_classes, test_classes)
 
 
+print(Counter(train_classes))
+print(Counter(test_classes))
+
 sub_keywords_map = get_keyword_dict(train_sub_keywords)
 train_sparse_vectors = get_sparse_subkeyword_vectors(train_sub_keywords, sub_keywords_map)
 test_sparse_vectors = get_sparse_subkeyword_vectors(test_sub_keywords, sub_keywords_map)
@@ -84,10 +93,10 @@ print(accuracy(pred_train, train_classes))
 pred_train_str = [inv_target_mapping[k] for k in pred_train]
 # print(fuzzy_accuracy(pred_train_str, train_lists_classes,2))
 
-print(data["main_class"].value_counts())
+
 print("---")
 for i in range(len(target_mapping)):
-    print(f"{inv_target_mapping[i]}: {len([x for x in pred_train if x == i])}")
+    print(f"{inv_target_mapping[i]}: {len([x for x in pred_train if x == i])}/ {len([x for x in train_classes if x == i])}")
 
 pred_test = clf.predict(test_dense_vectors)
 print(accuracy(pred_test, test_classes))

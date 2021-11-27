@@ -19,8 +19,6 @@ if __name__ == "__main__":
     
     
     train_indices, test_indices = split_data_by_class(0.2, classes)
-#     train_data = [preprocessed_data[i] for i in train_indices]
-#     test_data = [preprocessed_data[i] for i in test_indices]
     train_data = preprocessed_data.iloc[train_indices]
     test_data = preprocessed_data.iloc[test_indices]
     
@@ -29,22 +27,26 @@ if __name__ == "__main__":
     print(train_data["main_class"].value_counts())
     
     
+    
+
+    
+    
 #     for i in preprocessed_data:
 #         print(preprocessed_data[i])
 
-        
-    train_data = train_data.drop(train_data[train_data['main_class']=="thérapie cognitivo-comportementale"].sample(frac=.80).index)
-    train_data = train_data.drop(train_data[train_data['main_class']=="thérapie de soutien"].sample(frac=.50).index)
+    #ATTENTION SELON LE PREPROCESS, LES RATIOS SONT A CHANGER, ET L'ENTRAINEMENT PEUT AVOIR DES RÉSULTATS TRÈS DIFFÉRENTS
+    train_data = train_data.drop(train_data[train_data['main_class']=="thérapie cognitivo-comportementale"].sample(frac=.70).index)
+    train_data = train_data.drop(train_data[train_data['main_class']=="thérapie de soutien"].sample(frac=.20).index)
     
     train_data = train_data.append([train_data[train_data['main_class']=="thérapie systémique"]]*1)
     train_data = train_data.append([train_data[train_data['main_class']=="psychanalyse"]]*3)
-    train_data = train_data.append([train_data[train_data['main_class']=="neuropsychologie"]]*3)
-    train_data = train_data.append([train_data[train_data['main_class']=="sexothérapie"]]*4)
-    train_data = train_data.append([train_data[train_data['main_class']=="psychiatrie"]]*6)
-    train_data = train_data.append([train_data[train_data['main_class']=="approche centrée sur la personne"]]*9)
-    train_data = train_data.append([train_data[train_data['main_class']=="thérapie de la gestalt"]]*11)
-    train_data = train_data.append([train_data[train_data['main_class']=="thérapie psychocorporelle"]]*15)
-    train_data = train_data.append([train_data[train_data['main_class']=="thérapies existentielles"]]*50)
+    train_data = train_data.append([train_data[train_data['main_class']=="neuropsychologie"]]*4)
+    train_data = train_data.append([train_data[train_data['main_class']=="sexothérapie"]]*14)
+    train_data = train_data.append([train_data[train_data['main_class']=="psychiatrie"]]*3)
+    train_data = train_data.append([train_data[train_data['main_class']=="approche centrée sur la personne"]]*1)
+    train_data = train_data.append([train_data[train_data['main_class']=="thérapie de la gestalt"]]*4)
+    train_data = train_data.append([train_data[train_data['main_class']=="thérapie psychocorporelle"]]*5)
+    train_data = train_data.append([train_data[train_data['main_class']=="thérapies existentielles"]]*30)
 
     
 

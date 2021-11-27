@@ -8,7 +8,7 @@ def map_targets(train_targets, test_targets):
     target_mapping = {t: i for i, t in enumerate(list(set(train_targets)))}
     missing = [x for x in set(test_targets) if x not in train_targets]
     for key in missing:
-        target_mapping[key] = max(target_mapping.values())+1
+        taret_mapping[key] = max(target_mapping.values())+1    
     train_targets = [target_mapping[x] for x in train_targets]
     test_targets = [target_mapping[x] for x in test_targets]
     return train_targets, test_targets, target_mapping
@@ -105,7 +105,6 @@ def get_labels_from_keywords(keywords, keyword_class_dict):
             if keyword in current_keywords:  # if keyword in text, add labels associated with keyword
                 found_keywords.append(keyword)
                 for keyword_class in keyword_class_dict[keyword]:
-                    
                     if keyword_class in current_labels:
                         current_labels[keyword_class] += 1
                     else:
@@ -123,6 +122,54 @@ def get_labels_from_keywords(keywords, keyword_class_dict):
         labels.append(label)
         main_labels.append(current_labels[0][0])
     return main_labels,labels
+
+
+
+def get_labels_from_keywords_with_ratio(keywords, keyword_class_dict):
+    """
+    given a list of keywords for each example and a dict mapping keywords to associated class, return the class most
+    associated with each example based on it's keywords.
+    :param keywords: list of keywords for each example
+    :return: list of labels, one for each example
+    """
+    keyword_number_by_class = {}
+    for key,value in keyword_class_dict.items():
+        for val in value:
+            if val in keyword_number_by_class:
+                keyword_number_by_class[val] += 1
+            else:
+                keyword_number_by_class[val] = 1
+
+    labels = []
+    main_labels = []
+    for current_keywords in keywords:
+        current_labels = {}
+        found_keywords = []
+        for keyword in keyword_class_dict.keys():  # iterate over all keywords
+            if keyword in current_keywords:  # if keyword in text, add labels associated with keyword
+                found_keywords.append(keyword)
+                for keyword_class in keyword_class_dict[keyword]:
+                    ratio = keyword_number_by_class[keyword_class]
+                    if keyword_class in current_labels:
+                        current_labels[keyword_class] += 1 / ratio
+                    else:
+                        current_labels[keyword_class] = 1 / ratio
+        current_labels = list(current_labels.items())
+        current_labels.sort(key=lambda x: x[1], reverse=True)
+        
+        
+        i=0
+        label = current_labels[0][0]
+        while len(current_labels) > i+1:
+            i+=1
+            label = ';'.join([label, current_labels[i][0]])
+        
+        labels.append(label)
+        main_labels.append(current_labels[0][0])
+    return main_labels,labels
+
+
+
 
 
 if __name__ == "__main__":
@@ -152,4 +199,3 @@ if __name__ == "__main__":
 
     print(dataset["classes"].value_counts())
     print(len(dataset["classes"].value_counts()))
-
