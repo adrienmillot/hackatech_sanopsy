@@ -6,6 +6,9 @@ import random
 
 def map_targets(train_targets, test_targets):
     target_mapping = {t: i for i, t in enumerate(list(set(train_targets)))}
+    missing = [x for x in set(test_targets) if x not in train_targets]
+    for key in missing:
+        target_mapping[key] = max(target_mapping.values())+1
     train_targets = [target_mapping[x] for x in train_targets]
     test_targets = [target_mapping[x] for x in test_targets]
     return train_targets, test_targets, target_mapping
